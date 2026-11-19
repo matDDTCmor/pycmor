@@ -25,9 +25,12 @@ WORK=${PYCMOR_WORK:?set PYCMOR_WORK in $SETTINGS}
 ROOT=${ECE4_SAMPLES_ROOT:?set ECE4_SAMPLES_ROOT in $SETTINGS}
 SAMPLES=${ECE4_SAMPLES_DIR:-$ROOT/samples}
 # Full experiment inputs (cases using @SOURCE@): <root>/<exp>/source.
+# Falls back to <samples>/<exp>/... (ecearth4-output-samples layout) when absent under <root>.
 SOURCE=${SOURCE_DIR:-$ROOT/$EXP/source}
+[ -z "${SOURCE_DIR:-}" ] && [ ! -d "$SOURCE" ] && [ -d "$SAMPLES/$EXP/source" ] && SOURCE=$SAMPLES/$EXP/source
 # Run output in the EC-Earth4 layout (cases using @OUTPUT@): <root>/<exp>/output.
 OUTPUT=${EXP_OUTPUT:-$ROOT/$EXP/output}
+[ -z "${EXP_OUTPUT:-}" ] && [ ! -d "$OUTPUT" ] && [ -d "$SAMPLES/$EXP/output" ] && OUTPUT=$SAMPLES/$EXP/output
 # NEMO domain file (cases using @NEMO_DOMAIN@).
 NEMO_DOMAIN=${NEMO_DOMAIN:-}
 DREQ_VERSION=${DREQ_VERSION:-v1.2.2.4}
