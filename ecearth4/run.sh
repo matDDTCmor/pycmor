@@ -70,6 +70,11 @@ if grep -q '@NEMO_DOMAIN' "$TEMPLATE" && [ ! -f "$NEMO_DOMAIN" ]; then
     exit 2
 fi
 
+if grep -q '@OUTPUT@' "$TEMPLATE" && [ ! -d "$OUTPUT" ]; then
+    echo "run output not found: '$OUTPUT' (experiment '$EXP': pass it as the 3rd argument, or set EXP_OUTPUT in $SETTINGS)" >&2
+    exit 2
+fi
+
 case $MODE in
     plan) echo "# settings $SETTINGS"; echo "# exp  $EXP"; echo "# source $SOURCE"; echo "# output $OUTPUT"; echo "# domain ${NEMO_DOMAIN:-none}"; echo "# out  $OUT"; echo "# log  $LOGS/${CASE}_$TS.log"; render ;;
     run)
