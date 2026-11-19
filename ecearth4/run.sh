@@ -16,10 +16,8 @@ EXP=${3:-${CASE%%_*}}
 # ECEARTH4_SETTINGS. Lines NAME=value; variables already set win.
 SETTINGS=${ECEARTH4_SETTINGS:-$SRC/../ecearth4.env}
 if [ -f "$SETTINGS" ]; then
-    while IFS='=' read -r key val; do
-        case $key in ''|\#*) continue ;; esac
-        [ -z "${!key:-}" ] && export "$key=$val"
-    done < "$SETTINGS"
+    # shortcut: needs shell syntax (quote values with spaces); variables exported before win.
+    _env=$(export -p); set -a; source "$SETTINGS"; set +a; eval "$_env"
 fi
 WORK=${PYCMOR_WORK:?set PYCMOR_WORK in $SETTINGS}
 ROOT=${ECE4_SAMPLES_ROOT:?set ECE4_SAMPLES_ROOT in $SETTINGS}
