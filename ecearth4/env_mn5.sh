@@ -14,9 +14,9 @@ PYCDO_VERSION=${PYCDO_VERSION:-0.2.1}
 CDO_VERSION=${CDO_VERSION:-2.6.5}
 
 SRC=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
-# Settings: <checkout parent>/ecearth4.env (outside the repo), or the file in
+# Settings: ecearth4/ecearth4.env (git-ignored), or the file in
 # ECEARTH4_SETTINGS. Lines NAME=value; variables already set win.
-SETTINGS=${ECEARTH4_SETTINGS:-$SRC/../ecearth4.env}
+SETTINGS=${ECEARTH4_SETTINGS:-$SRC/ecearth4/ecearth4.env}
 if [ -f "$SETTINGS" ]; then
     # shortcut: needs shell syntax (quote values with spaces); variables exported before win.
     _env=$(export -p); set -a; source "$SETTINGS"; set +a; eval "$_env"

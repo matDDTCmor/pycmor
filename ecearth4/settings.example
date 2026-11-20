@@ -1,20 +1,20 @@
-# Copy to <checkout parent>/ecearth4.env (next to the pycmor checkout, outside
-# the repo) and fill in. Read by env_mn5.sh and run.sh; plain NAME=value, no
-# quotes, no variables. A variable already set in the shell wins.
+# Copy to ecearth4/ecearth4.env (git-ignored) and fill in. Read by env_mn5.sh and run.sh.
+# Set PYCMOR_WORK and ECE4_SAMPLES_ROOT; the other entries are optional and commented out:
+# uncomment one only to override its default.
 #
 # Work dir: pixi, caches, DReq venv and metadata.json.
 PYCMOR_WORK=
 # Optional: local cmip7-cmor-common checkout (0.3.0 or later) instead of the
 # public repo at a tag (env_mn5.sh COMMON_URL, COMMON_TAG).
-CMIP7_CMOR_COMMON=
+# CMIP7_CMOR_COMMON=
 # Optional: dir for rendered configs (default <PYCMOR_WORK>/runs); set it per
 # user when PYCMOR_WORK is a shared install.
-RUN_DIR=
-# ecearth4-output-samples root: samples/ inside; runs write <exp>/pycmor-out
+# RUN_DIR=
+# ecearth4-output-samples root: samples/ inside; runs write pycmor-out/<exp>
 # and logs/<exp> under it.
 ECE4_SAMPLES_ROOT=
 # Optional: run output in the EC-Earth4 layout (<leg>/lpjg, ...) for cases using
 # it; default <ECE4_SAMPLES_ROOT>/<exp>/output, else <ECE4_SAMPLES_ROOT>/samples/<exp>/output.
-EXP_OUTPUT=
-# NEMO domain file of the run (domain_cfg.nc in a leg runtime dir), nemo cases.
-NEMO_DOMAIN=
+# EXP_OUTPUT=
+# Optional: NEMO domain file; default <samples>/<exp>/domain_cfg.nc (leave unset to use it).
+# NEMO_DOMAIN=

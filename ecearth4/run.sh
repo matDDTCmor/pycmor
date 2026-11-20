@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Render <case>.yaml.in and run pycmor on it (cases: ecearth4/*.yaml.in).
 # Usage: run.sh plan|run <case> [<exp>]  (settings: ecearth4/settings.example)
-# <exp> defaults to the case name before "_". Output to <root>/<exp>/pycmor-out,
+# <exp> defaults to the case name before "_". Output to <root>/pycmor-out/<exp>,
 # log to <root>/logs/<exp>; OUT_DIR and LOG_DIR override. The log holds the
 # rendered config, pycmor's log and a summary of each output file.
 # run on a compute or interactive node; env from env_mn5.sh.
@@ -12,9 +12,9 @@ MODE=${1:-}
 CASE=${2:-}
 TEMPLATE=$SRC/ecearth4/$CASE.yaml.in
 EXP=${3:-${CASE%%_*}}
-# Settings: <checkout parent>/ecearth4.env (outside the repo), or the file in
+# Settings: ecearth4/ecearth4.env (git-ignored), or the file in
 # ECEARTH4_SETTINGS. Lines NAME=value; variables already set win.
-SETTINGS=${ECEARTH4_SETTINGS:-$SRC/../ecearth4.env}
+SETTINGS=${ECEARTH4_SETTINGS:-$SRC/ecearth4/ecearth4.env}
 if [ -f "$SETTINGS" ]; then
     # shortcut: needs shell syntax (quote values with spaces); variables exported before win.
     _env=$(export -p); set -a; source "$SETTINGS"; set +a; eval "$_env"
@@ -29,14 +29,14 @@ SOURCE=${SOURCE_DIR:-$ROOT/$EXP/source}
 # Run output in the EC-Earth4 layout (cases using @OUTPUT@): <root>/<exp>/output.
 OUTPUT=${EXP_OUTPUT:-$ROOT/$EXP/output}
 [ -z "${EXP_OUTPUT:-}" ] && [ ! -d "$OUTPUT" ] && [ -d "$SAMPLES/$EXP/output" ] && OUTPUT=$SAMPLES/$EXP/output
-# NEMO domain file (cases using @NEMO_DOMAIN@).
-NEMO_DOMAIN=${NEMO_DOMAIN:-}
+# NEMO domain file (cases using @NEMO_DOMAIN@): <samples>/<exp>/domain_cfg.nc unless NEMO_DOMAIN is set.
+NEMO_DOMAIN=${NEMO_DOMAIN:-$SAMPLES/$EXP/domain_cfg.nc}
 DREQ_VERSION=${DREQ_VERSION:-v1.2.2.4}
 METADATA=$WORK/cmip7_metadata/$DREQ_VERSION/metadata.json
 # cdo for remap_conservative (env_mn5.sh install).
 export PATH=$WORK/pixi-global/bin:$PATH
 TS=$(date +%Y%m%d_%H%M%S)
-OUT=${OUT_DIR:-$ROOT/$EXP/pycmor-out}
+OUT=${OUT_DIR:-$ROOT/pycmor-out/$EXP}
 LOGS=${LOG_DIR:-$ROOT/logs/$EXP}
 # Rendered configs: per user when PYCMOR_WORK is shared (read-only).
 TMP=${RUN_DIR:-$WORK/runs}/tmp_$TS
