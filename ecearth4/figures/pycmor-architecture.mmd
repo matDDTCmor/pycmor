@@ -1,0 +1,48 @@
+flowchart LR
+    subgraph inputs["Inputs"]
+        direction TB
+        modelOut["Model output<br/>FESOM, NEMO/SI3,<br/>OpenIFS, LPJ-GUESS"]
+        yamlCfg["YAML config<br/>general, pycmor, pipelines,<br/>rules, inherit"]
+        dreq["Data request + CVs<br/>DReq metadata.json,<br/>CMIP7-CVs, tables"]
+    end
+
+    cmorizer["CMORizer<br/>validates config,<br/>builds Rules and Pipelines<br/>Dask: local / slurm / ssh"]
+
+    subgraph pipe["Rule pipeline (one per CMOR variable)"]
+        direction LR
+        load["gather_inputs<br/>get_variable"] --> transform["custom steps<br/>orca_grid, reduced_to_regular<br/>timeavg, time bounds"]
+        transform --> finish["unit conversion<br/>global + variable attributes<br/>map_dimensions"]
+        finish --> save["save_dataset"]
+    end
+
+    cmorOut["CMOR output<br/>CMIP7 NetCDF<br/>pycmor-out/exp"]
+
+    subgraph ec["EC-Earth4 layer (ecearth4/)"]
+        direction TB
+        envMn5["env_mn5.sh<br/>pixi env, cdo, DReq metadata"]
+        runSh["run.sh plan | run case exp<br/>renders case.yaml.in"]
+        checks["check_remap.py, check_interp.py,<br/>check_cdo.py, nc_summary.py"]
+    end
+
+    yamlCfg --> cmorizer
+    dreq --> cmorizer
+    cmorizer -->|"rules"| load
+    modelOut -->|"inputs"| load
+    dreq -.->|"attributes"| finish
+    save --> cmorOut
+    envMn5 -->|"installs env"| runSh
+    runSh -->|"runs pycmor process"| cmorizer
+    cmorOut -->|"compared with source"| checks
+
+    classDef inp fill:#dbe9f6,stroke:#555,color:#111
+    classDef cfg fill:#fdebc8,stroke:#555,color:#111
+    classDef core fill:#d9efd9,stroke:#555,color:#111
+    classDef step fill:#e8dff3,stroke:#555,color:#111
+    classDef out fill:#f6d9d9,stroke:#555,color:#111
+    classDef ecc fill:#eeeeee,stroke:#555,color:#111
+    class modelOut inp
+    class yamlCfg,dreq cfg
+    class cmorizer core
+    class load,transform,finish,save step
+    class cmorOut out
+    class envMn5,runSh,checks ecc
