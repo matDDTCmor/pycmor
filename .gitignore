@@ -103,3 +103,6 @@ tools/sanity_check/reports/*.jsonl
 
 # local settings of ecearth4/run.sh and env_mn5.sh (paths, per user)
 ecearth4/ecearth4.env
+
+# graphify output
+graphify-out/
