@@ -1,0 +1,31 @@
+# pycmor, horizontal flow
+
+```mermaid
+%%{init: {"flowchart": {"nodeSpacing": 18, "rankSpacing": 28, "curve": "basis"}, "themeVariables": {"fontSize": "15px"}}}%%
+flowchart LR
+    modelOut["Model output<br/>FESOM, NEMO,<br/>OpenIFS, LPJ-GUESS"] --> gather
+    yamlCfg["YAML config<br/>rules, pipelines"] --> cmorizer["CMORizer<br/>Rules + Pipelines<br/>Dask"]
+    dreq["Data request<br/>+ CVs"] --> cmorizer
+    cmorizer --> gather
+
+    subgraph pipe["Rule pipeline (one per CMOR variable)"]
+        gather["gather_<br/>inputs"] --> getVar["get_<br/>variable"] --> custom["custom<br/>steps"] --> tavg["timeavg"] --> units["units"] --> attrs["attributes"] --> dims["map_<br/>dimensions"] --> save["save_<br/>dataset"]
+    end
+
+    dreq -.-> attrs
+    save --> cmorOut["CMOR output<br/>CMIP7 NetCDF"] --> checks["Checks<br/>remap, interp, cdo"]
+    envMn5["env_mn5.sh"] --> runSh["run.sh<br/>plan / run"] --> cmorizer
+
+    classDef inp fill:#dbe9f6,stroke:#555,color:#111
+    classDef cfg fill:#fdebc8,stroke:#555,color:#111
+    classDef core fill:#d9efd9,stroke:#555,color:#111
+    classDef step fill:#e8dff3,stroke:#555,color:#111
+    classDef out fill:#f6d9d9,stroke:#555,color:#111
+    classDef ecc fill:#eeeeee,stroke:#555,color:#111
+    class modelOut inp
+    class yamlCfg,dreq cfg
+    class cmorizer core
+    class gather,getVar,custom,tavg,units,attrs,dims,save step
+    class cmorOut out
+    class envMn5,runSh,checks ecc
+```
